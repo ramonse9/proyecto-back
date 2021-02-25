@@ -1,8 +1,6 @@
 const BD = require('../database/configOracleDB');
 
 const getArticulos = async (req, res) => {
-
-    console.log( 'getArticulo: ' );
     
     try{
 
@@ -56,9 +54,7 @@ const getArticulos = async (req, res) => {
 }
 
 const crearArticulo = async (req, res) => {
-      
-    console.log( 'crearArticulo:  body: ', req.body );
-    
+         
     const { nombre, id_categoria }  = req.body;
   
 
@@ -97,8 +93,6 @@ const crearArticulo = async (req, res) => {
 }
 
 const eliminarArticulo = async (req, res) => {
-      
-    console.log( 'crearArticulo:  body: ', req.body );
 
     const id_articulo = req.params.id;
     
@@ -135,8 +129,47 @@ const eliminarArticulo = async (req, res) => {
     }
 }
 
+const actualizarArticulo = async (req, res) => {
+    
+    const id_articulo = req.params.id;
+    
+    const { NOMBRE_ARTICULO, ID_CATEGORIA  }  = req.body;  
+
+    try{
+
+        const sql =           
+        `UPDATE test_articulos SET NOMBRE = :NOMBRE_ARTICULO
+        where id_articulo = :id_articulo
+        `; 
+      
+        let resultado  = await BD.Open( sql, [ NOMBRE_ARTICULO, id_articulo ], true ) ;  
+
+        if( !resultado ){            
+            res.status(400).json({
+                ok: false,
+                msg:"Error al actualizar"
+            })
+        }
+
+        res.json({
+            ok: true,
+            msg: 'Se actualizó el nombre del articulo'
+        });
+        
+    }catch(err){
+
+        console.log( err );
+
+        res.status(500).json({            
+            ok: false,
+            msg: `Error en actualizarArticulo: ${ err }`
+        })
+    }
+}
+
 module.exports = {
     getArticulos,
     crearArticulo,
-    eliminarArticulo
+    eliminarArticulo,
+    actualizarArticulo
 }

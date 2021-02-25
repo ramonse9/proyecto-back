@@ -7,7 +7,6 @@ const morgan = require('morgan');
 const app = express();
 
 app.use( cors() );
-//app.use( cors({ origin: true, credentials: true }) );
 
 app.use( express.json() );
 
@@ -19,15 +18,7 @@ app.use('/api/articulos', require('./routes/articulos'));
 
 app.use('/api/inventario', require('./routes/inventario'));
 
-/*
-app.get('/', (req, res) =>{
-    res.json( {
-        ok:true,
-        msg: 'Hola mundo'
-    })
-
-});
-*/
+app.use('/api/categorias', require('./routes/categorias'));
 
 
 const puerto = process.env.PORT || 3000

@@ -1,8 +1,6 @@
 const BD = require('../database/configOracleDB');
 
 const getInventario = async (req, res) => {
-
-    console.log( 'getInventario: ' );
     
     try{
 
@@ -48,8 +46,7 @@ const getInventario = async (req, res) => {
                 "NOMBRE_ARTICULO"               : inventario[4],
                 "ID_CATEGORIA"                  : inventario[5],
                 "NOMBRE_CATEGORIA"              : inventario[6],
-                "CANTIDAD"                      : inventario[7],
-                
+                "CANTIDAD"                      : inventario[7]                
             }         
          
             Inventario.push( inventarioSchema );
@@ -73,8 +70,6 @@ const getInventario = async (req, res) => {
 }
 
 const crearInventario = async (req, res) => {
-      
-    console.log( 'crearInventario:  body: ', req.body );
     
     const { 
         id_tienda, id_articulo, cantidad
@@ -117,21 +112,24 @@ const crearInventario = async (req, res) => {
 
 const actualizarInventario = async( req, res ) => {
     
-    console.log( 'actualizar Inventario:  body: ', req.body );
     const id_inventario = req.params.id;
     
     const { 
-        cantidad
+        ID_TIENDA,
+        ID_ARTICULO,
+        CANTIDAD
            }  = req.body;  
 
     try{
 
         const sql =           
-        `UPDATE test_inventarios set cantidad = :cantidad 
-        where id_inventario = :id_inventario
+        `UPDATE test_inventario set cantidad = :CANTIDAD 
+        where id_inventario = :ID_INVENTARIO
+        and ID_TIENDA = :ID_TIENDA
+        and ID_ARTICULO = :id_articulo
         `; 
       
-        let resultado  = await BD.Open( sql, [ cantidad, id_inventario ], true ) ;  
+        let resultado  = await BD.Open( sql, [ CANTIDAD, id_inventario, ID_TIENDA, ID_ARTICULO ], true ) ;  
               
         let Inventario = [];
 
@@ -153,7 +151,7 @@ const actualizarInventario = async( req, res ) => {
 
         res.status(500).json({            
             ok: false,
-            msg: `Error en postInentario: ${ err }`
+            msg: `Error en putInventario: ${ err }`
         })
     }
 

@@ -19,18 +19,13 @@ cns = {
 }
 
 async function Open( sql, binds, autoCommit ){
-
-  //const  pool = await oracledb.createPool( cns );
-  //const cnn   = await pool.getConnection();
   
   let cnn = await oracledb.getConnection( cns );
-  //const curren_schema = `ALTER SESSION SET current_schema = dwh_suka `;
-  //let resultSchema = await cnn.execute( curren_schema );
+
   let result = await cnn.execute( sql, binds, { autoCommit });
 
   cnn.release();
   return result;
-
 }
 
 exports.Open = Open;

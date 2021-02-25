@@ -1,8 +1,6 @@
 const BD = require('../database/configOracleDB');
 
 const getTiendas = async (req, res) => {
-
-    console.log( 'getTienda: ' );
     
     try{
 
@@ -49,8 +47,6 @@ const getTiendas = async (req, res) => {
 }
 
 const crearTienda = async (req, res) => {
-      
-    console.log( 'crearTienda:  body: ', req.body );
     
     const { nombre }  = req.body;
   
@@ -91,8 +87,6 @@ const crearTienda = async (req, res) => {
 
 const actualizarTienda = async (req, res) => {
       
-    console.log( 'actualizarTienda:  body: ', req.body );
-    console.log( 'actualizarTienda:  req.params: ', req.params );
     const id_tienda = req.params.id;
     
     const { NOMBRE }  = req.body;  
