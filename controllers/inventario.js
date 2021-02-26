@@ -1,11 +1,12 @@
-const BD = require('../database/configOracleDB');
+//const BD = require('../databaseVarias/configOracleDB');
+const pool = require('../database');
 
 const getInventario = async (req, res) => {
     
     try{
 
         const sql =           
-        `select
+            ` select
                 ti.id_inventario,
                 ti.id_tienda,
                 tt.nombre as nombre_tienda,
@@ -14,18 +15,19 @@ const getInventario = async (req, res) => {
                 ta.id_categoria,
                 tc.nombre as nombre_categoria,
                 ti.cantidad
-            
-        from test_inventario ti
-        left join test_tiendas tt
-            on ti.id_tienda = tt.id_tienda
-        left join test_articulos ta
-            on ti.id_articulo = ta.id_articulo
-        left join test_categorias tc
-            on ta.id_categoria = tc.id_categoria
-        order by tt.id_tienda, ta.id_articulo
-        `; 
+
+            from test_inventario ti
+            left join test_tiendas tt
+                on ti.id_tienda = tt.id_tienda
+            left join test_articulos ta
+                on ti.id_articulo = ta.id_articulo
+            left join test_categorias tc
+                on ta.id_categoria = tc.id_categoria
+            order by tt.id_tienda, ta.id_articulo
+            `; 
       
-        let resultado  = await BD.Open( sql, [ ], true ) ;  
+        //let resultado  = await BD.Open( sql, [ ], true ) ; 
+        let resultado = await pool.query( sql ); 
               
         let Inventario = [];
 
@@ -36,8 +38,7 @@ const getInventario = async (req, res) => {
             })
         }
         
-        resultado.rows.map( ( inventario ) => {
-            
+        /*resultado.rows.map( ( inventario ) => {            
             let inventarioSchema = {
                 "ID_INVENTARIO"                 : inventario[0],
                 "ID_TIENDA"                     : inventario[1],
@@ -48,7 +49,20 @@ const getInventario = async (req, res) => {
                 "NOMBRE_CATEGORIA"              : inventario[6],
                 "CANTIDAD"                      : inventario[7]                
             }         
-         
+            Inventario.push( inventarioSchema );
+        });*/
+
+        resultado.map( ( inventario ) => {            
+            let inventarioSchema = {
+                "ID_INVENTARIO"                 : inventario.id_inventario,
+                "ID_TIENDA"                     : inventario.id_tienda,
+                "NOMBRE_TIENDA"                 : inventario.nombre_tienda,
+                "ID_ARTICULO"                   : inventario.id_articulo,
+                "NOMBRE_ARTICULO"               : inventario.nombre_articulo,
+                "ID_CATEGORIA"                  : inventario.id_categoria,
+                "NOMBRE_CATEGORIA"              : inventario.nombre_categoria,
+                "CANTIDAD"                      : inventario.cantidad                
+            }         
             Inventario.push( inventarioSchema );
         });
         
@@ -74,18 +88,20 @@ const crearInventario = async (req, res) => {
     const { 
         id_tienda, id_articulo, cantidad
            }  = req.body;
-  
 
     try{
 
+        const items = {
+            id_tienda, id_articulo, cantidad
+        };
+
         const sql =           
-        `INSERT INTO test_inventario (ID_INVENTARIO, ID_TIENDA, ID_ARTICULO, CANTIDAD ) 
-        VALUES (ID_INVENTARIO.NEXTVAL, :id_tienda, :id_articulo, :cantidad )
-        `; 
+        `INSERT INTO test_inventario set ?`; 
       
-        let resultado  = await BD.Open( sql, [ id_tienda, id_articulo, cantidad ], true ) ;  
-              
-        let Inventario = [];
+        //let resultado  = await BD.Open( sql, [ id_tienda, id_articulo, cantidad ], true ) ;  
+        let resultado = await pool.query( sql, [ items ]);
+             
+        //let Inventario = [];
 
         if( !resultado ){            
             res.status(400).json({
@@ -122,16 +138,23 @@ const actualizarInventario = async( req, res ) => {
 
     try{
 
+        //const sql =           
+        //`UPDATE test_inventario set cantidad = :CANTIDAD 
+        //where id_inventario = :ID_INVENTARIO
+        //and ID_TIENDA = :ID_TIENDA
+        //and ID_ARTICULO = :id_articulo
+        //`; 
         const sql =           
-        `UPDATE test_inventario set cantidad = :CANTIDAD 
-        where id_inventario = :ID_INVENTARIO
-        and ID_TIENDA = :ID_TIENDA
-        and ID_ARTICULO = :id_articulo
+        `UPDATE test_inventario set cantidad = ?  
+        where id_inventario = ?
+        and ID_TIENDA = ?
+        and ID_ARTICULO = ?
         `; 
       
-        let resultado  = await BD.Open( sql, [ CANTIDAD, id_inventario, ID_TIENDA, ID_ARTICULO ], true ) ;  
+        //let resultado  = await BD.Open( sql, [ CANTIDAD, id_inventario, ID_TIENDA, ID_ARTICULO ], true ) ;  
+        let resultado = await pool.query( sql, [ CANTIDAD, id_inventario, ID_TIENDA, ID_ARTICULO ]);
               
-        let Inventario = [];
+        //let Inventario = [];
 
         if( !resultado ){            
             res.status(400).json({

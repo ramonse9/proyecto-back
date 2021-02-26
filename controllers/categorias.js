@@ -1,4 +1,6 @@
-const BD = require('../database/configOracleDB');
+//const BD = require('../databaseVarias/configOracleDB');
+
+const pool = require('../database');
 
 const getCategorias = async (req, res) => {
     
@@ -8,7 +10,8 @@ const getCategorias = async (req, res) => {
         `select * from test_categorias order by ID_CATEGORIA
         `; 
       
-        let resultado  = await BD.Open( sql, [ ], true ) ;  
+        //let resultado  = await BD.Open( sql, [ ], true ) ;  
+        let resultado = await pool.query( sql );
               
         let Categorias = [];
 
@@ -17,17 +20,36 @@ const getCategorias = async (req, res) => {
                 ok: false,
                 Categorias
             })
-        }
-        
-        resultado.rows.map( ( categoria ) => {
-            
+        }    
+         /*
+         categorias resultado:  {
+            metaData: [ { name: 'ID_CATEGORIA' }, { name: 'NOMBRE' } ],
+            rows: [
+              [ 1, 'Deportivos' ],
+              [ 4, 'Abarrote' ],
+              [ 5, 'Joyeria' ],
+              [ 6, 'Tecnología' ]
+            ]
+          }*/
+
+        resultado.map( ( categoria ) => {            
             let categoriaSchema = {
-                "ID_CATEGORIA"              : categoria[0],
-                "NOMBRE"                    : categoria[1]                
+                "ID_CATEGORIA"              : categoria.ID_CATEGORIA,
+                "NOMBRE"                    : categoria.NOMBRE  
+            }         
+            Categorias.push( categoriaSchema );
+        });
+
+        /*
+        resultado.map( ( RowDataPacket ) => {            
+            let categoriaSchema = {
+                "ID_CATEGORIA"              : RowDataPacket.ID_CATEGORIA,
+                "NOMBRE"                    : RowDataPacket.NOMBRE  
             }         
          
             Categorias.push( categoriaSchema );
         });
+        */
         
         res.json({
             ok: true,

@@ -1,4 +1,5 @@
-const BD = require('../database/configOracleDB');
+//const BD = require('../databaseVarias/configOracleDB');
+const pool = require('../database');
 
 const getTiendas = async (req, res) => {
     
@@ -8,7 +9,8 @@ const getTiendas = async (req, res) => {
         `select * from test_tiendas order by ID_TIENDA
         `; 
       
-        let resultado  = await BD.Open( sql, [ ], true ) ;  
+        //let resultado  = await BD.Open( sql, [ ], true ) ;  
+        let resultado = await pool.query( sql );
               
         let Tiendas = [];
 
@@ -18,14 +20,20 @@ const getTiendas = async (req, res) => {
                 Tiendas
             })
         }
-        
-        resultado.rows.map( ( tienda ) => {
-            
+        /*
+        resultado.rows.map( ( tienda ) => {            
             let tiendaSchema = {
                 "ID_TIENDA"                 : tienda[0],
                 "NOMBRE"                    : tienda[1]                
             }         
-         
+            Tiendas.push( tiendaSchema );
+        });*/
+
+        resultado.map( ( tienda ) => {            
+            let tiendaSchema = {
+                "ID_TIENDA"                 : tienda.ID_TIENDA,
+                "NOMBRE"                    : tienda.NOMBRE                
+            }         
             Tiendas.push( tiendaSchema );
         });
         
@@ -53,12 +61,16 @@ const crearTienda = async (req, res) => {
 
     try{
 
+        //const sql =           
+        //`INSERT INTO test_tiendas ( ID_TIENDA, NOMBRE ) 
+        //VALUES ( ID_TIENDA.NEXTVAL, :nombre  )
+        //`;
         const sql =           
-        `INSERT INTO test_tiendas ( ID_TIENDA, NOMBRE ) 
-        VALUES ( ID_TIENDA.NEXTVAL, :nombre  )
-        `; 
+        `INSERT INTO test_tiendas ( NOMBRE ) VALUES ( ? )`; 
+
       
-        let resultado  = await BD.Open( sql, [ nombre ], true ) ;  
+        //let resultado  = await BD.Open( sql, [ nombre ], true ) ;
+        let resultado = await pool.query( sql, [nombre] );  
               
         let Tiendas = [];
 
@@ -93,12 +105,15 @@ const actualizarTienda = async (req, res) => {
 
     try{
 
+        //const sql =           
+        //`UPDATE test_tiendas SET NOMBRE = :NOMBRE
+       // where id_tienda = :id_tienda
+        //`;
         const sql =           
-        `UPDATE test_tiendas SET NOMBRE = :NOMBRE
-        where id_tienda = :id_tienda
-        `; 
+        `UPDATE test_tiendas SET NOMBRE = ? where id_tienda = ?`; 
       
-        let resultado  = await BD.Open( sql, [ NOMBRE, id_tienda ], true ) ;  
+        //let resultado  = await BD.Open( sql, [ NOMBRE, id_tienda ], true ) ;  
+        let resultado = await pool.query( sql, [NOMBRE, id_tienda] );  
 
         if( !resultado ){            
             res.status(400).json({

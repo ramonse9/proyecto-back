@@ -1,4 +1,5 @@
-const BD = require('../database/configOracleDB');
+//const BD = require('../databaseVarias/configOracleDB');
+const pool = require('../database');
 
 const getArticulos = async (req, res) => {
     
@@ -13,7 +14,8 @@ const getArticulos = async (req, res) => {
         order by ta.id_articulo
         `; 
       
-        let resultado  = await BD.Open( sql, [ ], true ) ;  
+        //let resultado  = await BD.Open( sql, [ ], true );  
+        let resultado = await pool.query( sql );
               
         let Articulos = [];
 
@@ -24,17 +26,27 @@ const getArticulos = async (req, res) => {
             })
         }
         
-        resultado.rows.map( ( articulo ) => {
-            
-            let articuloSchema = {
-                "ID_ARTICULO"               : articulo[0],
-                "NOMBRE_ARTICULO"           : articulo[1],
-                "ID_CATEGORIA"              : articulo[2],
-                "NOMBRE_CATEGORIA"          : articulo[3]
-            }         
-         
-            Articulos.push( articuloSchema );
-        });
+        
+        //resultado.rows.map( ( articulo ) => {            
+        //    let articuloSchema = {
+        //        "ID_ARTICULO"               : articulo[0],
+        //        "NOMBRE_ARTICULO"           : articulo[1],
+        //        "ID_CATEGORIA"              : articulo[2],
+        //        "NOMBRE_CATEGORIA"          : articulo[3]
+        //    }         
+        //    Articulos.push( articuloSchema );
+        //});
+        
+       resultado.map( ( articulo ) => {            
+        let articuloSchema = {
+            "ID_ARTICULO"               : articulo.id_articulo,
+            "NOMBRE_ARTICULO"           : articulo.nombre_articulo,
+            "ID_CATEGORIA"              : articulo.id_categoria,
+            "NOMBRE_CATEGORIA"          : articulo.nombre_categoria
+        }         
+     
+        Articulos.push( articuloSchema );
+    });
         
         res.json({
             ok: true,
@@ -55,19 +67,22 @@ const getArticulos = async (req, res) => {
 
 const crearArticulo = async (req, res) => {
          
-    const { nombre, id_categoria }  = req.body;
-  
+    const { nombre, id_categoria }  = req.body;  
 
     try{
 
+        //const sql =           
+        //`INSERT INTO test_articulos ( ID_ARTICULO, NOMBRE, ID_CATEGORIA ) 
+        //VALUES ( ID_ARTICULO.NEXTVAL, :nombre, :id_categoria  )
+        //`; 
+        
         const sql =           
-        `INSERT INTO test_articulos ( ID_ARTICULO, NOMBRE, ID_CATEGORIA ) 
-        VALUES ( ID_ARTICULO.NEXTVAL, :nombre, :id_categoria  )
-        `; 
+        `INSERT INTO test_articulos (NOMBRE, ID_CATEGORIA ) VALUES ( ? , ? ) `; 
       
-        let resultado  = await BD.Open( sql, [ nombre, id_categoria ], true ) ;  
+        //let resultado  = await BD.Open( sql, [ nombre, id_categoria ], true ) ;  
+        let resultado = await pool.query( sql, [ nombre, id_categoria ] );
               
-        let Articulos = [];
+        //let Articulos = [];
 
         if( !resultado ){            
             res.status(400).json({
@@ -98,13 +113,15 @@ const eliminarArticulo = async (req, res) => {
     
     try{
 
+        //const sql =           
+        //`delete from test_articulos where ID_ARTICULO = :id_articulo
+        //`;
+        
         const sql =           
-        `delete from test_articulos where ID_ARTICULO = :id_articulo
-        `; 
+        `delete from test_articulos where ID_ARTICULO = ?`;
       
-        let resultado  = await BD.Open( sql, [ id_articulo ], true ) ;  
-              
-        let Articulos = [];
+        //let resultado  = await BD.Open( sql, [ id_articulo ], true ) ;  
+        let resultado = await pool.query( sql, [ id_articulo ] );
 
         if( !resultado ){            
             res.status(400).json({
@@ -133,16 +150,20 @@ const actualizarArticulo = async (req, res) => {
     
     const id_articulo = req.params.id;
     
-    const { NOMBRE_ARTICULO, ID_CATEGORIA  }  = req.body;  
+    const { NOMBRE_ARTICULO  }  = req.body;  
 
     try{
 
+        //const sql =           
+        //`UPDATE test_articulos SET NOMBRE = :NOMBRE_ARTICULO
+        //where id_articulo = :id_articulo
+        //`; 
+
         const sql =           
-        `UPDATE test_articulos SET NOMBRE = :NOMBRE_ARTICULO
-        where id_articulo = :id_articulo
-        `; 
+        `UPDATE test_articulos SET NOMBRE = ? where id_articulo = ?`; 
       
-        let resultado  = await BD.Open( sql, [ NOMBRE_ARTICULO, id_articulo ], true ) ;  
+        //let resultado  = await BD.Open( sql, [ NOMBRE_ARTICULO, id_articulo ], true ) ;  
+        let resultado = await pool.query( sql, [ NOMBRE_ARTICULO, id_articulo ] );
 
         if( !resultado ){            
             res.status(400).json({
