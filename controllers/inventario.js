@@ -96,7 +96,7 @@ const crearInventario = async (req, res) => {
         };
 
         const sql =           
-        `INSERT INTO test_inventario set ?`; 
+        `INSERT IGNORE INTO test_inventario set ?`; 
       
         //let resultado  = await BD.Open( sql, [ id_tienda, id_articulo, cantidad ], true ) ;  
         let resultado = await pool.query( sql, [ items ]);
@@ -180,8 +180,51 @@ const actualizarInventario = async( req, res ) => {
 
 }
 
+const eliminarInventario = async (req, res) => {
+
+    const id_inventario = req.params.id;
+
+    const { 
+        ID_TIENDA,
+        ID_ARTICULO
+           }  = req.body;  
+    
+    try{
+        
+        const sql =           
+        `Delete from test_inventario where id_inventario = ?
+        and ID_TIENDA = ?
+        and ID_ARTICULO = ?`;
+      
+        //let resultado  = await BD.Open( sql, [ id_articulo ], true ) ;  
+        let resultado = await pool.query( sql, [ id_inventario, ID_TIENDA, ID_ARTICULO ]);
+
+        if( !resultado ){            
+            res.status(400).json({
+                ok: false,
+                msg: 'Inventario eliminado'
+            })
+        }
+
+        res.json({
+            ok: true,
+            msg: 'Se eliminó el inventario'
+        });
+        
+    }catch(err){
+
+        console.log( err );
+
+        res.status(500).json({            
+            ok: false,
+            msg: `Error en deleteInventario: ${ err }`
+        })
+    }
+}
+
 module.exports = {
     getInventario,
     crearInventario,
-    actualizarInventario
+    actualizarInventario,
+    eliminarInventario
 }
