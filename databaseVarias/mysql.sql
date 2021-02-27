@@ -35,10 +35,10 @@ ALTER TABLE test_categorias
 
 DESCRIBE test_categorias;
 
-INSERT INTO TEST_CATEGORIAS ( NOMBRE) VALUES ( 'Deportivo');
-INSERT INTO TEST_CATEGORIAS ( NOMBRE) VALUES ( 'Joyeria');
-INSERT INTO TEST_CATEGORIAS ( NOMBRE) VALUES ( 'Tecnologia');
-INSERT INTO TEST_CATEGORIAS ( NOMBRE) VALUES ( 'Abarrote');
+INSERT INTO test_categorias ( NOMBRE) VALUES ( 'Deportivo');
+INSERT INTO test_categorias ( NOMBRE) VALUES ( 'Joyeria');
+INSERT INTO test_categorias ( NOMBRE) VALUES ( 'Tecnologia');
+INSERT INTO test_categorias ( NOMBRE) VALUES ( 'Abarrote');
 
 select * from test_categorias;
 
@@ -80,3 +80,25 @@ ALTER TABLE test_inventario
 
 ALTER TABLE test_inventario
 	MODIFY ID_INVENTARIO INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT = 1;
+
+HOST
+bdgsl9khrsyu9pkgo3wa-mysql.services.clever-cloud.com
+
+Database Name
+bdgsl9khrsyu9pkgo3wa
+
+User
+uxdajimrfke93gbn
+
+Password
+zcjBRNXpLWBxhpZpynEq
+
+Port
+3306
+
+Connection URI
+mysql://uxdajimrfke93gbn:zcjBRNXpLWBxhpZpynEq@bdgsl9khrsyu9pkgo3wa-mysql.services.clever-cloud.com:3306/bdgsl9khrsyu9pkgo3wa
+
+
+mysql cli
+mysql -h bdgsl9khrsyu9pkgo3wa-mysql.services.clever-cloud.com -P 3306 -u uxdajimrfke93gbn -p bdgsl9khrsyu9pkgo3wa
